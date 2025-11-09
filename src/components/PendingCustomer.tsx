@@ -39,7 +39,7 @@ const PendingCustomer: React.FC = () => {
   const API_URL = process.env.REACT_APP_API_URL;
 
   /** ✅ Fetch data from backend and filter only Pending or Updated or Reopened */
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/epf/all`);
@@ -47,9 +47,7 @@ const PendingCustomer: React.FC = () => {
 
       const pending = result.filter((r: Customer) => {
         const ws = r.workStatus?.toLowerCase() || "";
-        const st = r.workStatus?.toLowerCase() || "";
-
-        return ws === "pending" || ws === "updated" || st === "pending";
+        return ws === "pending" || ws === "updated";
       });
 
       setData(pending);
@@ -59,7 +57,7 @@ const PendingCustomer: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL]); // ✅ correct dependency
 
   useEffect(() => {
     fetchData();

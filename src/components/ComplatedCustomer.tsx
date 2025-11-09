@@ -49,7 +49,7 @@ const CompletedCustomer: React.FC = () => {
   const [search, setSearch] = useState("");
   const API_URL = process.env.REACT_APP_API_URL;
   // ✅ Fetch All Customers
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     try {
       const res = await fetch(`${API_URL}/api/epf/all`);
       const result = await res.json();
@@ -62,7 +62,7 @@ const CompletedCustomer: React.FC = () => {
       console.error("Error fetching data:", error);
       setLoading(false);
     }
-  };
+  }, [API_URL]); // ✅ dependency
 
   useEffect(() => {
     fetchData();
