@@ -38,7 +38,7 @@ const PendingCustomer: React.FC = () => {
 
   const API_URL = process.env.REACT_APP_API_URL;
 
-  /** ✅ Fetch data from backend and filter only Pending or Updated or Reopened */
+  /** ✅ Fetch data from backend and filter only Pending or Updated */
   const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
@@ -57,7 +57,7 @@ const PendingCustomer: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_URL]); // ✅ correct dependency
+  }, [API_URL]);
 
   useEffect(() => {
     fetchData();
@@ -91,13 +91,6 @@ const PendingCustomer: React.FC = () => {
   const handleViewUpdatedStatus = (text: string) => {
     setViewText(text || "No details available");
     setOpenViewDialog(true);
-  };
-
-  const rotateStyle = {
-    transform: "rotate(-45deg)",
-    transformOrigin: "left bottom",
-    display: "inline-block",
-    whiteSpace: "nowrap",
   };
 
   return (
