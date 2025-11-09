@@ -66,7 +66,7 @@ const CompletedCustomer: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // ✅ Search Filter (NULL SAFE)
   useEffect(() => {

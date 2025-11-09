@@ -63,7 +63,7 @@ const PendingCustomer: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   /** ✅ Live Search */
   useEffect(() => {
