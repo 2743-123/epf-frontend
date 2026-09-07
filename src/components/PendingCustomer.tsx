@@ -486,6 +486,7 @@ const PendingCustomer: React.FC = () => {
           onClose={() => setSnackbarOpen(false)}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
+         
           <Alert
             onClose={() => setSnackbarOpen(false)}
             severity="success"
