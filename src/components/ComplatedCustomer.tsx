@@ -19,7 +19,6 @@ import {
   Fade,
 } from "@mui/material";
 
-import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import RestoreIcon from "@mui/icons-material/SettingsBackupRestore";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
