@@ -1,44 +1,55 @@
-import React, { useState } from "react";
+import React from "react";
 import { AppBar, Toolbar, Tabs, Tab, Typography, Box } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 const NavbarTabs: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
-
-  const handleTabChange = (_: any, newValue: number) => {
-    setSelectedTab(newValue);
-  };
-
   const navigate = useNavigate();
-  const redirect = (url: string): void => {
-    navigate(url);
+  const location = useLocation();
+
+  // Map route paths to tab indices. 
+  // If the path doesn't match either, default to false or 0.
+  const pathToTabIndex: { [key: string]: number } = {
+    "/PendingCustomer": 0,
+    "/ComplatedCustomer": 1, // Note: Consider fixing typo to "/CompletedCustomer" if possible
   };
+
+  const currentTab = pathToTabIndex[location.pathname] ?? false;
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    const routes = ["/PendingCustomer", "/ComplatedCustomer"];
+    navigate(routes[newValue]);
+  };
+
   return (
-    <Box>
-      {/* 🔹 AppBar with Tabs */}
-      <AppBar position="static" sx={{ bgcolor: "#1976d2" }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ bgcolor: "#1976d2", boxShadow: 2 }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Typography variant="h6" component="div" sx={{ fontWeight: 600, letterSpacing: 0.5 }}>
             🧾 EPF Dashboard
           </Typography>
           <Tabs
-            value={selectedTab}
+            value={currentTab}
             onChange={handleTabChange}
             textColor="inherit"
             indicatorColor="secondary"
+            aria-label="EPF Dashboard Navigation Tabs"
+            sx={{
+              "& .MTab-root": {
+                textTransform: "none",
+                fontWeight: 500,
+                fontSize: "0.95rem",
+              },
+            }}
           >
-            <Tab
-              onClick={() => redirect("/PendingCustomer")}
-              label="Pending EPF Customers"
-            />
-            <Tab
-              onClick={() => redirect("/ComplatedCustomer")}
-              label="Completed Customers"
-            />
+            <Tab label="Pending EPF Customers" />
+            <Tab label="Completed Customers" />
           </Tabs>
         </Toolbar>
       </AppBar>
-      <Outlet />
+      
+      <Box component="main" sx={{ p: 3 }}>
+        <Outlet />
+      </Box>
     </Box>
   );
 };
