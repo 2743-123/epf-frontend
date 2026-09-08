@@ -22,6 +22,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import RestoreIcon from "@mui/icons-material/SettingsBackupRestore";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import AddCustomerDialog from "./AddCustomerDialog";
 import Swal from "sweetalert2";
 
@@ -191,18 +192,18 @@ const CompletedCustomer: React.FC = () => {
 
   return (
     <Fade in timeout={600}>
-      <Box sx={{ p: { xs: 2, sm: 4 }, maxWidth: 1600, mx: "auto" }}>
+      <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, maxWidth: 1600, mx: "auto" }}>
         {/* Top Header Card */}
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
-            mb: 4,
-            flexWrap: "wrap",
-            gap: 3,
+            alignItems: { xs: "stretch", sm: "center" },
+            mb: 3,
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
             bgcolor: "background.paper",
-            p: 3,
+            p: { xs: 2, sm: 3 },
             borderRadius: 3,
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
             border: "1px solid",
@@ -210,7 +211,7 @@ const CompletedCustomer: React.FC = () => {
           }}
         >
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary", mb: 0.5 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary", mb: 0.5, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
               Completed Customers
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
@@ -218,7 +219,7 @@ const CompletedCustomer: React.FC = () => {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap", width: { xs: "100%", sm: "auto" } }}>
             <TextField
               variant="outlined"
               size="small"
@@ -226,7 +227,8 @@ const CompletedCustomer: React.FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               sx={{
-                minWidth: 280,
+                flexGrow: { xs: 1, sm: 0 },
+                minWidth: { xs: "100%", sm: 260 },
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   bgcolor: "grey.50",
@@ -253,6 +255,7 @@ const CompletedCustomer: React.FC = () => {
                 px: 2.5,
                 py: 1,
                 bgcolor: "#2563eb",
+                width: { xs: "100%", sm: "auto" },
                 "&:hover": { bgcolor: "#1d4ed8" },
               }}
             >
@@ -261,7 +264,7 @@ const CompletedCustomer: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Data Table */}
+        {/* Responsive Scrollable Data Table Container */}
         <TableContainer
           component={Paper}
           elevation={0}
@@ -270,22 +273,23 @@ const CompletedCustomer: React.FC = () => {
             border: "1px solid",
             borderColor: "divider",
             boxShadow: "0px 4px 24px rgba(0, 0, 0, 0.02)",
-            overflow: "hidden",
+            width: "100%",
+            overflowX: "auto", // Allows smooth sideways scrolling on mobiles
           }}
         >
-          <Table sx={{ minWidth: 1200 }}>
+          <Table sx={{ minWidth: 1100 }}>
             <TableHead sx={{ backgroundColor: "grey.50" }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2 }}>ID</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Customer Name</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Aadhar Name</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>UAN Number</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>DOB</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Paid Amount</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Created Date</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Completed Date</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: 4 }}>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2, whiteSpace: "nowrap" }}>ID</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Customer Name</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Aadhar Name</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>UAN Number</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>DOB</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Paid Amount</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Created Date</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Completed Date</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: 3, whiteSpace: "nowrap" }}>
                   Actions
                 </TableCell>
               </TableRow>
@@ -302,15 +306,15 @@ const CompletedCustomer: React.FC = () => {
                       "&:last-child td": { borderBottom: 0 },
                     }}
                   >
-                    <TableCell sx={{ fontWeight: 500, color: "text.secondary" }}>#{cust.id}</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: "text.primary" }}>{cust.name}</TableCell>
-                    <TableCell sx={{ color: "text.secondary" }}>{cust.aadharCardName || "—"}</TableCell>
-                    <TableCell sx={{ fontFamily: "monospace", color: "text.secondary" }}>
+                    <TableCell sx={{ fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>#{cust.id}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap" }}>{cust.name}</TableCell>
+                    <TableCell sx={{ color: "text.secondary", whiteSpace: "nowrap" }}>{cust.aadharCardName || "—"}</TableCell>
+                    <TableCell sx={{ fontFamily: "monospace", color: "text.secondary", whiteSpace: "nowrap" }}>
                       {cust.uanNumber || "—"}
                     </TableCell>
-                    <TableCell sx={{ color: "text.secondary" }}>{cust.dob || "—"}</TableCell>
+                    <TableCell sx={{ color: "text.secondary", whiteSpace: "nowrap" }}>{cust.dob || "—"}</TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{ whiteSpace: "nowrap" }}>
                       <Chip
                         icon={<CheckCircleOutlineIcon style={{ fontSize: 14, color: "#16a34a" }} />}
                         label={cust.workStatus}
@@ -325,20 +329,20 @@ const CompletedCustomer: React.FC = () => {
                       />
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 600, color: "success.main" }}>
+                    <TableCell sx={{ fontWeight: 600, color: "success.main", whiteSpace: "nowrap" }}>
                       {cust.paidAmount != null ? `₹${cust.paidAmount.toLocaleString()}` : "—"}
                     </TableCell>
 
-                    <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem" }}>
+                    <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem", whiteSpace: "nowrap" }}>
                       {cust.createDate ? new Date(cust.createDate).toLocaleDateString() : "—"}
                     </TableCell>
 
-                    <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem" }}>
+                    <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem", whiteSpace: "nowrap" }}>
                       {cust.confirmDate ? new Date(cust.confirmDate).toLocaleDateString() : "—"}
                     </TableCell>
 
-                    <TableCell align="right" sx={{ pr: 3 }}>
-                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.5, alignItems: "center" }}>
+                    <TableCell align="right" sx={{ pr: 3, whiteSpace: "nowrap" }}>
+                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, alignItems: "center" }}>
                         <Tooltip title="Reopen file to pending workflow" arrow>
                           <Button
                             variant="outlined"
@@ -352,6 +356,8 @@ const CompletedCustomer: React.FC = () => {
                               borderRadius: 2,
                               borderColor: "warning.main",
                               color: "warning.dark",
+                              py: 0.5,
+                              px: 1.5,
                               "&:hover": { bgcolor: "rgba(245, 158, 11, 0.04)" },
                             }}
                           >
@@ -368,11 +374,11 @@ const CompletedCustomer: React.FC = () => {
                               border: "1px solid",
                               borderColor: "error.light",
                               borderRadius: 2,
-                              p: 1,
+                              p: 0.8,
                               "&:hover": { bgcolor: "rgba(239, 68, 68, 0.04)" },
                             }}
                           >
-                            DeleteIcon
+                            <DeleteIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                       </Box>
