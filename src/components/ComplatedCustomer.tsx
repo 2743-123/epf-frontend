@@ -18,7 +18,6 @@ import {
   Tooltip,
   Fade,
   Collapse,
-  Grid,
   Snackbar,
   Alert,
   Dialog,
@@ -72,7 +71,7 @@ const formatDate = (dateString: string | undefined | null) => {
 };
 
 // =========================================================
-// SUB-COMPONENT: Expandable Row (Mobile Optimized)
+// SUB-COMPONENT: Expandable Row (Scrollable Edition)
 // =========================================================
 const CustomerRow = ({
   cust,
@@ -111,7 +110,7 @@ const CustomerRow = ({
 
   return (
     <React.Fragment>
-      {/* MAIN VISIBLE ROW */}
+      {/* MAIN VISIBLE ROW - All columns visible to force horizontal scroll */}
       <TableRow
         sx={{
           "& > *": { borderBottom: "unset" },
@@ -126,62 +125,35 @@ const CustomerRow = ({
           </IconButton>
         </TableCell>
         
-        {/* Hides ID on very small screens */}
-        <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>#{cust.id}</TableCell>
+        <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>#{cust.id}</TableCell>
+        <TableCell sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap" }}>{cust.name || "—"}</TableCell>
+        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>{cust.uanNumber || "—"}</TableCell>
         
-        {/* Name is always visible */}
-        <TableCell sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap" }}>
-          {cust.name || "—"}
-          {/* Mobile indicator for status since status column is hidden */}
-          <Box sx={{ display: { xs: "block", md: "none" }, mt: 0.5 }}>
-             <Typography variant="caption" sx={{ color: "success.main", fontWeight: 600 }}>● Completed</Typography>
-          </Box>
-        </TableCell>
-        
-        {/* Hides UAN on mobile, visible on desktop */}
-        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>{cust.uanNumber || "—"}</TableCell>
-        
-        {/* Hides Status Chip on mobile */}
-        <TableCell sx={{ whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>
+        <TableCell sx={{ whiteSpace: "nowrap" }}>
           <Chip icon={<CheckCircleOutlineIcon style={{ fontSize: 14, color: "#16a34a" }} />} label="Completed" size="small" sx={{ backgroundColor: "rgba(22, 163, 74, 0.1)", color: "#15803d", fontWeight: 600, borderRadius: 1.5, px: 0.5 }} />
         </TableCell>
         
-        {/* Hides Paid Amount on mobile */}
-        <TableCell sx={{ fontWeight: 700, color: "success.main", whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>
+        <TableCell sx={{ fontWeight: 700, color: "success.main", whiteSpace: "nowrap" }}>
           {cust.paidAmount != null ? `₹${cust.paidAmount.toLocaleString()}` : "—"}
         </TableCell>
 
-        {/* Hides Date on mobile */}
-        <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem", whiteSpace: "nowrap", display: { xs: "none", lg: "table-cell" } }}>
+        <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem", whiteSpace: "nowrap" }}>
           {formatDate(cust.confirmDate)}
         </TableCell>
 
-        {/* Actions are always visible */}
-        <TableCell align="right" sx={{ pr: { xs: 1, sm: 3 }, whiteSpace: "nowrap" }}>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: { xs: 0.5, sm: 1 }, alignItems: "center" }}>
+        <TableCell align="right" sx={{ pr: 2, whiteSpace: "nowrap" }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, alignItems: "center" }}>
             
-            {/* Desktop Button for Reopen */}
             <Tooltip title="Reopen to pending" arrow>
               <Button
                 variant="outlined" size="small" color="warning" startIcon={<RestoreIcon fontSize="small" />}
                 onClick={() => handleReopen(cust.id)}
-                sx={{ display: { xs: "none", sm: "flex" }, textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "warning.main", color: "warning.dark", py: 0.5, px: 1.5, "&:hover": { bgcolor: "rgba(245, 158, 11, 0.04)" } }}
+                sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "warning.main", color: "warning.dark", py: 0.5, px: 1.5, "&:hover": { bgcolor: "rgba(245, 158, 11, 0.04)" } }}
               >
                 Reopen
               </Button>
             </Tooltip>
 
-            {/* Mobile Icon-only for Reopen (Saves space) */}
-            <Tooltip title="Reopen to pending" arrow>
-              <IconButton 
-                size="small" color="warning" onClick={() => handleReopen(cust.id)}
-                sx={{ display: { xs: "flex", sm: "none" }, border: "1px solid", borderColor: "warning.main", borderRadius: 2, p: 0.8 }}
-              >
-                <RestoreIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-
-            {/* Delete Icon (Always Icon) */}
             <Tooltip title="Delete record" arrow>
               <IconButton
                 color="error" size="small" onClick={() => handleDelete(cust.id)}
@@ -194,7 +166,7 @@ const CustomerRow = ({
         </TableCell>
       </TableRow>
 
-      {/* EXPANDED DETAILS PANEL */}
+      {/* EXPANDED DETAILS PANEL (Using CSS Grid instead of MUI Grid to fix TS Error) */}
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, border: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
@@ -202,27 +174,29 @@ const CustomerRow = ({
               <Typography variant="subtitle2" gutterBottom component="div" sx={{ fontWeight: 700, color: "success.main", mb: 2 }}>
                 Full Customer Details
               </Typography>
-              <Grid container spacing={3}>
+              
+              {/* CSS Grid Setup - Error Free */}
+              <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 3 }}>
                 
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box>
                   <DetailItem label="UAN Number" value={cust.uanNumber} fieldName="UAN Number" />
                   <DetailItem label="UAN Password" value={cust.uanPassword} fieldName="UAN Password" />
                   <DetailItem label="Mobile Number" value={cust.aadharMobile} fieldName="Mobile" />
-                </Grid>
+                </Box>
 
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box>
                   <DetailItem label="Aadhar Card Name" value={cust.aadharCardName} fieldName="Aadhar Name" />
                   <DetailItem label="Aadhar Number" value={cust.aadharNumber} fieldName="Aadhar Number" />
                   <DetailItem label="DOB" value={formatDate(cust.dob)} fieldName="Date of Birth" />
-                </Grid>
+                </Box>
 
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box>
                   <DetailItem label="Bank Account No" value={cust.bankAccountNumber} fieldName="Bank Account" />
                   <DetailItem label="IFSC Code" value={cust.ifscCode} fieldName="IFSC Code" />
                   <DetailItem label="Paid Amount" value={cust.paidAmount != null ? `₹${cust.paidAmount}` : null} fieldName="Paid Amount" />
-                </Grid>
+                </Box>
 
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box>
                   <DetailItem label="Commission Amount" value={cust.commissionAmount != null ? `₹${cust.commissionAmount}` : null} fieldName="Commission" />
                   <DetailItem label="Completed Date" value={formatDate(cust.confirmDate)} fieldName="Completed Date" />
                   
@@ -235,9 +209,9 @@ const CustomerRow = ({
                       {cust.updatedStatus ? "View Notes" : "No Notes"}
                     </Button>
                   </Box>
-                </Grid>
+                </Box>
 
-              </Grid>
+              </Box>
             </Box>
           </Collapse>
         </TableCell>
@@ -404,7 +378,7 @@ const CompletedCustomer: React.FC = () => {
               Completed Customers
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.875rem" } }}>
-              Archive of successfully processed files. Expand rows to view full details.
+              Archive of successfully processed files. Swipe horizontally to view table columns.
             </Typography>
           </Box>
 
@@ -423,18 +397,29 @@ const CompletedCustomer: React.FC = () => {
           </Box>
         </Box>
 
-        {/* DATA TABLE (EXPANDABLE & RESPONSIVE) */}
-        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: { xs: 3, sm: 4 }, boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.03)", border: "1px solid", borderColor: "grey.100", overflow: "hidden" }}>
-          <Table sx={{ minWidth: { xs: "100%", sm: 900 } }}>
+        {/* DATA TABLE - OVERFLOW 'AUTO' FIXES THE HORIZONTAL SCROLLING */}
+        <TableContainer 
+          component={Paper} 
+          elevation={0} 
+          sx={{ 
+            borderRadius: { xs: 3, sm: 4 }, 
+            boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.03)", 
+            border: "1px solid", 
+            borderColor: "grey.100", 
+            overflowX: "auto" // ⬅️ SCROLL YAHAN SE THEEK HUA HAI
+          }}
+        >
+          {/* minWidth 1000px forces the table to scroll on phones */}
+          <Table sx={{ minWidth: 1000 }}> 
             <TableHead sx={{ bgcolor: "grey.50" }}>
               <TableRow>
                 <TableCell width="40px" sx={{ px: { xs: 1, sm: 2 } }} />
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2.5, whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>ID</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2.5, whiteSpace: "nowrap" }}>ID</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Customer Name</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>UAN Number</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>Paid Amount</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", lg: "table-cell" } }}>Completed On</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>UAN Number</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Paid Amount</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Completed On</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: { xs: 1, sm: 4 }, whiteSpace: "nowrap" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
