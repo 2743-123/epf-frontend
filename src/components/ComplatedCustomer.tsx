@@ -204,25 +204,25 @@ const CustomerRow = ({
               </Typography>
               <Grid container spacing={3}>
                 
-                <Grid >
+                <Grid size={{xs:12, sm:6 ,md:3}}>
                   <DetailItem label="UAN Number" value={cust.uanNumber} fieldName="UAN Number" />
                   <DetailItem label="UAN Password" value={cust.uanPassword} fieldName="UAN Password" />
                   <DetailItem label="Mobile Number" value={cust.aadharMobile} fieldName="Mobile" />
                 </Grid>
 
-                <Grid>
+                <Grid size={{xs:12, sm:6 ,md:3}}>
                   <DetailItem label="Aadhar Card Name" value={cust.aadharCardName} fieldName="Aadhar Name" />
                   <DetailItem label="Aadhar Number" value={cust.aadharNumber} fieldName="Aadhar Number" />
                   <DetailItem label="DOB" value={formatDate(cust.dob)} fieldName="Date of Birth" />
                 </Grid>
 
-                <Grid>
+                <Grid size={{xs:12, sm:6 ,md:3}}>
                   <DetailItem label="Bank Account No" value={cust.bankAccountNumber} fieldName="Bank Account" />
                   <DetailItem label="IFSC Code" value={cust.ifscCode} fieldName="IFSC Code" />
                   <DetailItem label="Paid Amount" value={cust.paidAmount != null ? `₹${cust.paidAmount}` : null} fieldName="Paid Amount" />
                 </Grid>
 
-                <Grid>
+                <Grid size={{xs:12, sm:6 ,md:3}}>
                   <DetailItem label="Commission Amount" value={cust.commissionAmount != null ? `₹${cust.commissionAmount}` : null} fieldName="Commission" />
                   <DetailItem label="Completed Date" value={formatDate(cust.confirmDate)} fieldName="Completed Date" />
                   
