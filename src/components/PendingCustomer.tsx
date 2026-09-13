@@ -24,8 +24,7 @@ import {
   Alert,
   Collapse,
   IconButton,
-  Grid,
-} from "@mui/material";
+} from "@mui/material"; // Grid removed to avoid TS errors
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/VisibilityOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircleOutline";
@@ -51,7 +50,7 @@ const formatDOB = (dateString: string | undefined | null) => {
 };
 
 // =========================================================
-// SUB-COMPONENT: Expandable Row
+// SUB-COMPONENT: Expandable Row (Mobile Optimized & Scrollable)
 // =========================================================
 const CustomerRow = ({
   cust,
@@ -87,7 +86,7 @@ const CustomerRow = ({
         {label}
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-        <Typography variant="body2" sx={{ fontWeight: 500, color: value && value !== "—" ? "text.primary" : "text.disabled" }}>
+        <Typography variant="body2" sx={{ fontWeight: 500, color: value && value !== "—" ? "text.primary" : "text.disabled", wordBreak: "break-word" }}>
           {value || "—"}
         </Typography>
         {value && value !== "—" && (
@@ -103,7 +102,7 @@ const CustomerRow = ({
 
   return (
     <React.Fragment>
-      {/* MAIN VISIBLE ROW */}
+      {/* MAIN VISIBLE ROW - Nowrap added to prevent text breaking while scrolling */}
       <TableRow
         sx={{
           "& > *": { borderBottom: "unset" },
@@ -117,11 +116,11 @@ const CustomerRow = ({
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>#{cust.id}</TableCell>
-        <TableCell sx={{ fontWeight: 600, color: "text.primary" }}>{cust.name || "—"}</TableCell>
-        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500 }}>{cust.uanNumber || "—"}</TableCell>
-        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500 }}>{cust.aadharMobile || "—"}</TableCell>
-        <TableCell>
+        <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>#{cust.id}</TableCell>
+        <TableCell sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap" }}>{cust.name || "—"}</TableCell>
+        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>{cust.uanNumber || "—"}</TableCell>
+        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>{cust.aadharMobile || "—"}</TableCell>
+        <TableCell sx={{ whiteSpace: "nowrap" }}>
           <Chip
             icon={<IconComponent style={{ fontSize: 14, color: chipColor }} />}
             label={cust.workStatus || "Pending"}
@@ -129,7 +128,7 @@ const CustomerRow = ({
             sx={{ backgroundColor: chipBg, color: chipColor, fontWeight: 600, borderRadius: 1.5, px: 0.5 }}
           />
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="right" sx={{ pr: 2, whiteSpace: "nowrap" }}>
           <Button
             variant="contained" color="success" size="small" disableElevation
             startIcon={<CheckCircleIcon fontSize="small" />} onClick={() => handleOpenConfirm(cust)}
@@ -140,36 +139,38 @@ const CustomerRow = ({
         </TableCell>
       </TableRow>
 
-      {/* EXPANDED DETAILS PANEL */}
+      {/* EXPANDED DETAILS PANEL - Using Error-Free CSS Grid */}
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, border: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ m: 2, p: 3, bgcolor: "#f8fafc", borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)" }}>
+            <Box sx={{ m: { xs: 1, sm: 2 }, p: { xs: 2, sm: 3 }, bgcolor: "#f8fafc", borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)" }}>
               <Typography variant="subtitle2" gutterBottom component="div" sx={{ fontWeight: 700, color: "primary.main", mb: 2 }}>
                 Detailed Information
               </Typography>
-              <Grid container spacing={4}>
+              
+              {/* Responsive CSS Grid Implementation */}
+              <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 3 }}>
                 
                 {/* Column 1: EPFO Login */}
-                <Grid size={{ xs:12, sm:6, md:3 }}>
+                <Box>
                   <DetailItem label="UAN Password" value={cust.uanPassword} fieldName="UAN Password" />
                   <DetailItem label="DOB" value={formatDOB(cust.dob)} fieldName="Date of Birth" />
-                </Grid>
+                </Box>
 
                 {/* Column 2: Identity */}
-                <Grid size={{ xs:12, sm:6, md:3 }}>
+                <Box>
                   <DetailItem label="Aadhar Card Name" value={cust.aadharCardName} fieldName="Aadhar Name" />
                   <DetailItem label="Aadhar Number" value={cust.aadharNumber} fieldName="Aadhar Number" />
-                </Grid>
+                </Box>
 
                 {/* Column 3: Banking */}
-                <Grid size={{ xs:12, sm:6, md:3 }}>
+                <Box>
                   <DetailItem label="Bank Account No" value={cust.bankAccountNumber} fieldName="Bank Account" />
                   <DetailItem label="IFSC Code" value={cust.ifscCode} fieldName="IFSC Code" />
-                </Grid>
+                </Box>
 
                 {/* Column 4: Financials & Notes */}
-                <Grid size={{ xs:12, sm:6, md:3 }}>
+                <Box>
                   <DetailItem label="Commission Amount" value={cust.commissionAmount != null ? `₹${cust.commissionAmount}` : null} fieldName="Commission" />
                   <DetailItem label="Paid Amount" value={cust.paidAmount != null ? `₹${cust.paidAmount}` : null} fieldName="Paid Amount" />
                   
@@ -177,14 +178,14 @@ const CustomerRow = ({
                     <Button
                       size="small" variant="outlined" startIcon={<VisibilityIcon fontSize="small" />}
                       onClick={() => handleViewUpdatedStatus(cust.updatedStatus || "")} disabled={!cust.updatedStatus}
-                      sx={{ textTransform: "none", borderRadius: 2, width: "100%" }}
+                      sx={{ textTransform: "none", borderRadius: 2, width: "100%", borderColor: "divider", color: "text.primary" }}
                     >
                       {cust.updatedStatus ? "View Notes" : "No Notes"}
                     </Button>
                   </Box>
-                </Grid>
+                </Box>
 
-              </Grid>
+              </Box>
             </Box>
           </Collapse>
         </TableCell>
@@ -257,50 +258,69 @@ const PendingCustomer: React.FC = () => {
     setSnackbarOpen(true);
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "60vh", gap: 2.5 }}>
+        <CircularProgress thickness={4} size={48} sx={{ color: "#3b82f6" }} />
+        <Typography sx={{ color: "text.secondary", fontWeight: 500, letterSpacing: 0.5 }}>
+          Loading pending queue...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Fade in timeout={600}>
-      <Box sx={{ p: { xs: 2, sm: 4 }, maxWidth: 1400, mx: "auto" }}>
+      <Box sx={{ p: { xs: 1, sm: 3, md: 4 }, maxWidth: 1400, mx: "auto" }}>
         
         {/* HEADER SECTION */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4, flexWrap: "wrap", gap: 3, bgcolor: "background.paper", p: 3, borderRadius: 4, boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)" }}>
+        <Box sx={{ 
+          display: "flex", justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" }, mb: { xs: 2, sm: 4 }, 
+          flexDirection: { xs: "column", sm: "row" }, gap: 2, bgcolor: "background.paper", p: { xs: 2, sm: 3 }, 
+          borderRadius: { xs: 3, sm: 4 }, boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)" 
+        }}>
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5 }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
               Pending Customers
             </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Expand rows to view full details and copy credentials.
+            <Typography variant="body2" sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.875rem" } }}>
+              Expand rows to view full details. Swipe horizontally to view table columns.
             </Typography>
           </Box>
           <TextField
             variant="outlined" size="small" placeholder="Search Name, UAN, Aadhar..." value={search} onChange={(e) => setSearch(e.target.value)}
-            sx={{ minWidth: 300, "& .MuiOutlinedInput-root": { borderRadius: 3, bgcolor: "grey.50" } }}
+            sx={{ width: "100%", minWidth: { sm: 260 }, "& .MuiOutlinedInput-root": { borderRadius: 3, bgcolor: "grey.50" } }}
             InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" sx={{ color: "text.secondary" }} /></InputAdornment> }}
           />
         </Box>
 
-        {/* DATA TABLE (EXPANDABLE) */}
-        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 4, boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.03)", border: "1px solid", borderColor: "grey.100", overflow: "hidden" }}>
-          <Table sx={{ minWidth: 800 }}>
+        {/* DATA TABLE - HORIZONTAL SCROLL ENABLED */}
+        <TableContainer 
+          component={Paper} 
+          elevation={0} 
+          sx={{ 
+            borderRadius: { xs: 3, sm: 4 }, 
+            boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.03)", 
+            border: "1px solid", 
+            borderColor: "grey.100", 
+            overflowX: "auto" // FIX FOR HORIZONTAL SCROLLING
+          }}
+        >
+          {/* minWidth forces scroll on smaller screens */}
+          <Table sx={{ minWidth: 1000 }}>
             <TableHead sx={{ bgcolor: "grey.50" }}>
               <TableRow>
-                <TableCell width="50px" />
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2.5 }}>ID</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Customer Name</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>UAN Number</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Mobile Number</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>Status</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: 4 }}>Action</TableCell>
+                <TableCell width="40px" sx={{ px: { xs: 1, sm: 2 } }} />
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2.5, whiteSpace: "nowrap" }}>ID</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Customer Name</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>UAN Number</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Mobile Number</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Status</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: { xs: 1, sm: 4 }, whiteSpace: "nowrap" }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading ? (
-                 <TableRow>
-                   <TableCell colSpan={7} align="center" sx={{ py: 10 }}>
-                     <CircularProgress size={40} thickness={4} sx={{ color: "primary.main", mb: 2 }} />
-                     <Typography sx={{ color: "text.secondary", fontWeight: 500 }}>Loading pending queue...</Typography>
-                   </TableCell>
-                 </TableRow>
-              ) : filteredData.length > 0 ? (
+              {filteredData.length > 0 ? (
                 filteredData.map((cust) => (
                   <CustomerRow
                     key={cust.id}
@@ -328,15 +348,15 @@ const PendingCustomer: React.FC = () => {
           <ConfirmDialog open={openDialog} onClose={() => { setOpenDialog(false); setSelectedCustomer(null); }} customer={selectedCustomer} onUpdated={() => fetchData(false)} />
         )}
 
-        <Dialog open={openViewDialog} onClose={() => setOpenViewDialog(false)} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 3, p: 1 } }}>
-          <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>📝 Work Notes & Status</DialogTitle>
-          <DialogContent dividers sx={{ borderColor: "divider" }}>
-            <Box sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace", bgcolor: "grey.50", p: 2.5, borderRadius: 2, border: "1px solid", borderColor: "divider", minHeight: "100px", fontSize: "0.9rem", color: "text.primary" }}>
+        <Dialog open={openViewDialog} onClose={() => setOpenViewDialog(false)} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 3, p: 1, m: { xs: 2, sm: 4 } } }}>
+          <DialogTitle sx={{ fontWeight: 700, pb: 1, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}>📝 Work Notes & Status</DialogTitle>
+          <DialogContent dividers sx={{ borderColor: "divider", p: { xs: 2, sm: 3 } }}>
+            <Box sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace", bgcolor: "grey.50", p: 2, borderRadius: 2, border: "1px solid", borderColor: "divider", minHeight: "100px", fontSize: { xs: "0.8rem", sm: "0.9rem" }, color: "text.primary" }}>
               {viewText}
             </Box>
           </DialogContent>
-          <DialogActions sx={{ px: 3, py: 2 }}>
-            <Button onClick={() => setOpenViewDialog(false)} variant="contained" disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 3 }}>Close</Button>
+          <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
+            <Button onClick={() => setOpenViewDialog(false)} variant="contained" disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 3, bgcolor: "#2563eb", "&:hover": { bgcolor: "#1d4ed8" } }}>Close</Button>
           </DialogActions>
         </Dialog>
 
