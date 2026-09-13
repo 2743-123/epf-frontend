@@ -72,7 +72,7 @@ const formatDate = (dateString: string | undefined | null) => {
 };
 
 // =========================================================
-// SUB-COMPONENT: Expandable Row
+// SUB-COMPONENT: Expandable Row (Mobile Optimized)
 // =========================================================
 const CustomerRow = ({
   cust,
@@ -89,14 +89,13 @@ const CustomerRow = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  // Reusable Detail Item UI
   const DetailItem = ({ label, value, fieldName }: { label: string; value: any; fieldName: string }) => (
     <Box sx={{ mb: 2 }}>
       <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
         {label}
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-        <Typography variant="body2" sx={{ fontWeight: 500, color: value && value !== "—" ? "text.primary" : "text.disabled" }}>
+        <Typography variant="body2" sx={{ fontWeight: 500, color: value && value !== "—" ? "text.primary" : "text.disabled", wordBreak: "break-word" }}>
           {value || "—"}
         </Typography>
         {value && value !== "—" && (
@@ -126,38 +125,63 @@ const CustomerRow = ({
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>#{cust.id}</TableCell>
-        <TableCell sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap" }}>{cust.name || "—"}</TableCell>
-        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap" }}>{cust.uanNumber || "—"}</TableCell>
         
-        <TableCell sx={{ whiteSpace: "nowrap" }}>
-          <Chip
-            icon={<CheckCircleOutlineIcon style={{ fontSize: 14, color: "#16a34a" }} />}
-            label="Completed"
-            size="small"
-            sx={{ backgroundColor: "rgba(22, 163, 74, 0.1)", color: "#15803d", fontWeight: 600, borderRadius: 1.5, px: 0.5 }}
-          />
+        {/* Hides ID on very small screens */}
+        <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>#{cust.id}</TableCell>
+        
+        {/* Name is always visible */}
+        <TableCell sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap" }}>
+          {cust.name || "—"}
+          {/* Mobile indicator for status since status column is hidden */}
+          <Box sx={{ display: { xs: "block", md: "none" }, mt: 0.5 }}>
+             <Typography variant="caption" sx={{ color: "success.main", fontWeight: 600 }}>● Completed</Typography>
+          </Box>
         </TableCell>
         
-        <TableCell sx={{ fontWeight: 700, color: "success.main", whiteSpace: "nowrap" }}>
+        {/* Hides UAN on mobile, visible on desktop */}
+        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>{cust.uanNumber || "—"}</TableCell>
+        
+        {/* Hides Status Chip on mobile */}
+        <TableCell sx={{ whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>
+          <Chip icon={<CheckCircleOutlineIcon style={{ fontSize: 14, color: "#16a34a" }} />} label="Completed" size="small" sx={{ backgroundColor: "rgba(22, 163, 74, 0.1)", color: "#15803d", fontWeight: 600, borderRadius: 1.5, px: 0.5 }} />
+        </TableCell>
+        
+        {/* Hides Paid Amount on mobile */}
+        <TableCell sx={{ fontWeight: 700, color: "success.main", whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>
           {cust.paidAmount != null ? `₹${cust.paidAmount.toLocaleString()}` : "—"}
         </TableCell>
 
-        <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem", whiteSpace: "nowrap" }}>
+        {/* Hides Date on mobile */}
+        <TableCell sx={{ color: "text.secondary", fontSize: "0.875rem", whiteSpace: "nowrap", display: { xs: "none", lg: "table-cell" } }}>
           {formatDate(cust.confirmDate)}
         </TableCell>
 
-        <TableCell align="right" sx={{ pr: 3, whiteSpace: "nowrap" }}>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, alignItems: "center" }}>
+        {/* Actions are always visible */}
+        <TableCell align="right" sx={{ pr: { xs: 1, sm: 3 }, whiteSpace: "nowrap" }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: { xs: 0.5, sm: 1 }, alignItems: "center" }}>
+            
+            {/* Desktop Button for Reopen */}
             <Tooltip title="Reopen to pending" arrow>
               <Button
                 variant="outlined" size="small" color="warning" startIcon={<RestoreIcon fontSize="small" />}
                 onClick={() => handleReopen(cust.id)}
-                sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "warning.main", color: "warning.dark", py: 0.5, px: 1.5, "&:hover": { bgcolor: "rgba(245, 158, 11, 0.04)" } }}
+                sx={{ display: { xs: "none", sm: "flex" }, textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "warning.main", color: "warning.dark", py: 0.5, px: 1.5, "&:hover": { bgcolor: "rgba(245, 158, 11, 0.04)" } }}
               >
                 Reopen
               </Button>
             </Tooltip>
+
+            {/* Mobile Icon-only for Reopen (Saves space) */}
+            <Tooltip title="Reopen to pending" arrow>
+              <IconButton 
+                size="small" color="warning" onClick={() => handleReopen(cust.id)}
+                sx={{ display: { xs: "flex", sm: "none" }, border: "1px solid", borderColor: "warning.main", borderRadius: 2, p: 0.8 }}
+              >
+                <RestoreIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+
+            {/* Delete Icon (Always Icon) */}
             <Tooltip title="Delete record" arrow>
               <IconButton
                 color="error" size="small" onClick={() => handleDelete(cust.id)}
@@ -174,35 +198,33 @@ const CustomerRow = ({
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, border: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ m: 2, p: 3, bgcolor: "#f8fafc", borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)" }}>
+            <Box sx={{ m: { xs: 1, sm: 2 }, p: { xs: 2, sm: 3 }, bgcolor: "#f8fafc", borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)" }}>
               <Typography variant="subtitle2" gutterBottom component="div" sx={{ fontWeight: 700, color: "success.main", mb: 2 }}>
                 Full Customer Details
               </Typography>
-              <Grid container spacing={4}>
+              <Grid container spacing={3}>
                 
-                {/* Column 1: Identity */}
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid >
+                  <DetailItem label="UAN Number" value={cust.uanNumber} fieldName="UAN Number" />
+                  <DetailItem label="UAN Password" value={cust.uanPassword} fieldName="UAN Password" />
+                  <DetailItem label="Mobile Number" value={cust.aadharMobile} fieldName="Mobile" />
+                </Grid>
+
+                <Grid>
                   <DetailItem label="Aadhar Card Name" value={cust.aadharCardName} fieldName="Aadhar Name" />
                   <DetailItem label="Aadhar Number" value={cust.aadharNumber} fieldName="Aadhar Number" />
                   <DetailItem label="DOB" value={formatDate(cust.dob)} fieldName="Date of Birth" />
                 </Grid>
 
-                {/* Column 2: Login & Contact */}
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <DetailItem label="UAN Password" value={cust.uanPassword} fieldName="UAN Password" />
-                  <DetailItem label="Mobile Number" value={cust.aadharMobile} fieldName="Mobile" />
-                </Grid>
-
-                {/* Column 3: Banking */}
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid>
                   <DetailItem label="Bank Account No" value={cust.bankAccountNumber} fieldName="Bank Account" />
                   <DetailItem label="IFSC Code" value={cust.ifscCode} fieldName="IFSC Code" />
+                  <DetailItem label="Paid Amount" value={cust.paidAmount != null ? `₹${cust.paidAmount}` : null} fieldName="Paid Amount" />
                 </Grid>
 
-                {/* Column 4: Financials & Dates */}
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid>
                   <DetailItem label="Commission Amount" value={cust.commissionAmount != null ? `₹${cust.commissionAmount}` : null} fieldName="Commission" />
-                  <DetailItem label="Created Date" value={formatDate(cust.createDate)} fieldName="Created Date" />
+                  <DetailItem label="Completed Date" value={formatDate(cust.confirmDate)} fieldName="Completed Date" />
                   
                   <Box sx={{ mt: 1 }}>
                     <Button
@@ -367,29 +389,29 @@ const CompletedCustomer: React.FC = () => {
 
   return (
     <Fade in timeout={600}>
-      <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, maxWidth: 1400, mx: "auto" }}>
+      <Box sx={{ p: { xs: 1, sm: 3, md: 4 }, maxWidth: 1400, mx: "auto" }}>
         
         {/* TOP HEADER */}
         <Box
           sx={{
-            display: "flex", justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" }, mb: 4,
+            display: "flex", justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" }, mb: { xs: 2, sm: 4 },
             flexDirection: { xs: "column", sm: "row" }, gap: 2, bgcolor: "background.paper", p: { xs: 2, sm: 3 },
-            borderRadius: 4, boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)"
+            borderRadius: { xs: 3, sm: 4 }, boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)"
           }}
         >
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
               Completed Customers
             </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.875rem" } }}>
               Archive of successfully processed files. Expand rows to view full details.
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap", width: { xs: "100%", sm: "auto" } }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexDirection: { xs: "column", sm: "row" }, width: { xs: "100%", sm: "auto" } }}>
             <TextField
               variant="outlined" size="small" placeholder="Search Name, UAN, Aadhar..." value={search} onChange={(e) => setSearch(e.target.value)}
-              sx={{ flexGrow: { xs: 1, sm: 0 }, minWidth: { xs: "100%", sm: 260 }, "& .MuiOutlinedInput-root": { borderRadius: 3, bgcolor: "grey.50" } }}
+              sx={{ width: "100%", minWidth: { sm: 260 }, "& .MuiOutlinedInput-root": { borderRadius: 3, bgcolor: "grey.50" } }}
               InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" sx={{ color: "text.secondary" }} /></InputAdornment> }}
             />
             <Button
@@ -401,19 +423,19 @@ const CompletedCustomer: React.FC = () => {
           </Box>
         </Box>
 
-        {/* DATA TABLE (EXPANDABLE) */}
-        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 4, boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.03)", border: "1px solid", borderColor: "grey.100", overflow: "hidden" }}>
-          <Table sx={{ minWidth: 900 }}>
+        {/* DATA TABLE (EXPANDABLE & RESPONSIVE) */}
+        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: { xs: 3, sm: 4 }, boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.03)", border: "1px solid", borderColor: "grey.100", overflow: "hidden" }}>
+          <Table sx={{ minWidth: { xs: "100%", sm: 900 } }}>
             <TableHead sx={{ bgcolor: "grey.50" }}>
               <TableRow>
-                <TableCell width="50px" />
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2.5, whiteSpace: "nowrap" }}>ID</TableCell>
+                <TableCell width="40px" sx={{ px: { xs: 1, sm: 2 } }} />
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", py: 2.5, whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>ID</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Customer Name</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>UAN Number</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Paid Amount</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap" }}>Completed On</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: 4, whiteSpace: "nowrap" }}>Actions</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>UAN Number</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", md: "table-cell" } }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", sm: "table-cell" } }}>Paid Amount</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "text.secondary", whiteSpace: "nowrap", display: { xs: "none", lg: "table-cell" } }}>Completed On</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 600, color: "text.secondary", pr: { xs: 1, sm: 4 }, whiteSpace: "nowrap" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             
@@ -442,25 +464,22 @@ const CompletedCustomer: React.FC = () => {
           </Table>
         </TableContainer>
 
-        {/* ADD CUSTOMER DIALOG */}
         <AddCustomerDialog open={openDialog} onClose={() => setOpenDialog(false)} onAdded={fetchData} />
 
-        {/* VIEW NOTES DIALOG */}
-        <Dialog open={openViewDialog} onClose={() => setOpenViewDialog(false)} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 3, p: 1 } }}>
-          <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>📝 Work Notes & Status</DialogTitle>
-          <DialogContent dividers sx={{ borderColor: "divider" }}>
-            <Box sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace", bgcolor: "grey.50", p: 2.5, borderRadius: 2, border: "1px solid", borderColor: "divider", minHeight: "100px", fontSize: "0.9rem", color: "text.primary" }}>
+        <Dialog open={openViewDialog} onClose={() => setOpenViewDialog(false)} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 3, p: 1, m: { xs: 2, sm: 4 } } }}>
+          <DialogTitle sx={{ fontWeight: 700, pb: 1, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}>📝 Work Notes & Status</DialogTitle>
+          <DialogContent dividers sx={{ borderColor: "divider", p: { xs: 2, sm: 3 } }}>
+            <Box sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace", bgcolor: "grey.50", p: 2, borderRadius: 2, border: "1px solid", borderColor: "divider", minHeight: "100px", fontSize: { xs: "0.8rem", sm: "0.9rem" }, color: "text.primary" }}>
               {viewText}
             </Box>
           </DialogContent>
-          <DialogActions sx={{ px: 3, py: 2 }}>
+          <DialogActions sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
             <Button onClick={() => setOpenViewDialog(false)} variant="contained" disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 3, bgcolor: "#16a34a", "&:hover": { bgcolor: "#15803d" } }}>
               Close
             </Button>
           </DialogActions>
         </Dialog>
 
-        {/* COPY SNACKBAR */}
         <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
           <Alert onClose={() => setSnackbarOpen(false)} severity="success" variant="filled" sx={{ width: "100%", borderRadius: 2, fontWeight: 600, boxShadow: 4 }}>
             {copyMessage}
